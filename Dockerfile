@@ -1,15 +1,55 @@
-FROM ubuntu:16.04
+# -----------------------------------------------------------------------------
+# This is base image of Ubuntu LTS with SSHD service.
+#
+# Authors: Art567
+# Updated: Sep 20th, 2015
+# Require: Docker (http://www.docker.io/)
+# -----------------------------------------------------------------------------
 
-RUN apt-get update && apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-RUN echo 'root:screencast' | chpasswd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+# Base system is the latest LTS version of Ubuntu.
+from   ubuntu
 
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
 
-EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+# Make sure we don't get notifications we can't answer during building.
+env    DEBIAN_FRONTEND noninteractive
+
+
+# Prepare scripts and configs
+add    ./scripts/start /start
+
+
+# Download and install everything from the repos.
+run    apt-get -q -y update; apt-get -q -y upgrade && \
+       apt-get -q -y install sudo openssh-server && \
+       mkdir /var/run/sshd
+
+
+# Set root password
+run    echo 'root:password' >> /root/passwdfile
+
+
+# Create user and it's password
+run    useradd -m -G sudo master && \
+       echo 'master:password' >> /root/passwdfile
+
+
+# Apply root password
+run    chpasswd -c SHA512 < /root/passwdfile && \
+       rm /root/passwdfile
+
+
+# Port 22 is used for ssh
+expose 22
+
+
+# Assign /data as static volume.
+volume ["/data"]
+
+
+# Fix all permissions
+run    chmod +x /start
+
+
+# Starting sshd
+cmd    ["/start"]
