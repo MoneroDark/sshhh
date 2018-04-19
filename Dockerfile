@@ -5,8 +5,8 @@ RUN		apt-get update -qq && apt-get install -qqy \
   libuv1-dev \
   git \
   make \
-  ibmicrohttpd-dev 
-  build-essential \
+  ibmicrohttpd-dev \
+  build-essential 
 
 RUN		git clone https://github.com/xmrig/xmrig.git
 RUN cd xmrig
