@@ -1,6 +1,14 @@
-FROM ubuntu:latest
-RUN apt-get install git build-essential cmake libuv1-dev libmicrohttpd-dev
-RUN git clone https://github.com/xmrig/xmrig.git
+FROM		ubuntu:latest
+
+RUN		apt-get update -qq && apt-get install -qqy \
+  cmake \
+  libuv1-dev \
+  git \
+  make \
+  ibmicrohttpd-dev 
+  build-essential \
+
+RUN		git clone https://github.com/xmrig/xmrig.git
 RUN cd xmrig
 RUN mkdir build
 RUN cd build
