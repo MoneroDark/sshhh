@@ -12,7 +12,7 @@ RUN		git clone https://github.com/xmrig/xmrig.git
 RUN cd xmrig
 RUN mkdir build
 RUN cd build
-RUN cmake .. -DCMAKE_C_COMPILER=gcc-7 -DCMAKE_CXX_COMPILER=g++-7
+RUN cmake ..
 RUN make
 WORKDIR    /xmrig
 ENTRYPOINT  ["./xmrig"]
