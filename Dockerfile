@@ -10,10 +10,7 @@ RUN		apt-get update -qq && apt-get install -qqy \
 
 RUN		git clone https://github.com/xmrig/xmrig.git
 RUN cd xmrig
-RUN mkdir build && \
-      cmake . && \
-      make && \
-      apk del \
-        build-base \
-        cmake \
-        git
+RUN mkdir build
+RUN cd build
+RUN cmake ..
+RUN make
