@@ -12,7 +12,8 @@ RUN		git clone https://github.com/xmrig/xmrig.git
 RUN cd xmrig
 RUN mkdir build
 RUN cd build
-RUN cmake ..
+RUN cd ..
+RUN cmake
 RUN make
 WORKDIR    /xmrig
 ENTRYPOINT  ["./xmrig"]
