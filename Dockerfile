@@ -1,51 +1,10 @@
-# -----------------------------------------------------------------------------
-# This is base image of Ubuntu LTS with SSHD service.
-#
-# Authors: Art567
-# Updated: Sep 20th, 2015
-# Require: Docker (http://www.docker.io/)
-# -----------------------------------------------------------------------------
-
-
-# Base system is the latest LTS version of Ubuntu.
-from   ubuntu
-
-
-# Make sure we don't get notifications we can't answer during building.
-env    DEBIAN_FRONTEND noninteractive
-
-
-# Download and install everything from the repos.
-run    apt-get -q -y update; apt-get -q -y upgrade && \
-       apt-get -q -y install sudo openssh-server && \
-       mkdir /var/run/sshd
-
-
-# Set root password
-run    echo 'root:password' >> /root/passwdfile
-
-
-# Create user and it's password
-run    useradd -m -G sudo master && \
-       echo 'master:password' >> /root/passwdfile
-
-
-# Apply root password
-run    chpasswd -c SHA512 < /root/passwdfile && \
-       rm /root/passwdfile
-
-
-# Port 22 is used for ssh
-expose 22
-
-
-# Assign /data as static volume.
-volume ["/data"]
-
-
-# Fix all permissions
-run    chmod +x /start
-
-
-# Starting sshd
-cmd    ["/start"]
+FROM UBUNTU:LATEST
+sudo apt-get install git build-essential cmake libuv1-dev libmicrohttpd-dev
+git clone https://github.com/xmrig/xmrig.git
+cd xmrig
+mkdir build
+cd build
+cmake ..
+make
+WORKDIR    /xmrig
+ENTRYPOINT  ["./xmrig"]
