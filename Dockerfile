@@ -1,18 +1,20 @@
-FROM		ubuntu:xenial
-
-RUN		apt-get update -qq && apt-get install -qqy \
-  cmake \
-  libuv1-dev \
-  git \
-  make \
-  libmicrohttpd-dev \
-  build-essential 
-
-RUN		git clone https://github.com/xmrig/xmrig.git
-RUN cd xmrig
-RUN mkdir build
-RUN cd build
-RUN cmake ..
-RUN make
+FROM  alpine:latest
+RUN   adduser -S -D -H -h /xmrig miner
+RUN   apk --no-cache upgrade && \
+      apk --no-cache add \
+        git \
+        cmake \
+        libuv-dev \
+        build-base && \
+      git clone https://github.com/xmrig/xmrig && \
+      cd xmrig && \
+      mkdir build && \
+      cmake -DCMAKE_BUILD_TYPE=Release -DWITH_HTTPD=OFF . && \
+      make && \
+      apk del \
+        build-base \
+        cmake \
+        git
+USER miner
 WORKDIR    /xmrig
 ENTRYPOINT  ["./xmrig"]
