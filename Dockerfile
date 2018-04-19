@@ -5,6 +5,6 @@ RUN cd xmrig
 RUN mkdir build
 RUN cd build
 RUN cmake ..
-make
+RUN make
 WORKDIR    /xmrig
 ENTRYPOINT  ["./xmrig"]
