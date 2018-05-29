@@ -1,14 +1,26 @@
-FROM alpine
+FROM ubuntu:16.04
 
-RUN apk add --update \
-        bash \
-        curl \
-    && rm -rf /var/cache/apk/*
-    
-RUN curl -OL https://github.com/xmrig/xmrig/releases/download/v2.5.3/xmrig-2.5.3-xenial-amd64.tar.gz
-RUN tar -xzvf ./xmrig-2.5.3-xenial-amd64.tar.gz
-RUN cd xmrig-2.5.3
+ARG DONATE_LEVEL=1
 
-ENTRYPOINT ["./xmrig -o xmr-eu1.nanopool.org:14444 -u 49KZjKD9McXR9VpmcnWAczgRChyYckiXQVTtsnr8so84FA8ttpkvLrsKpmAHJ7vLUqHGT3sV2dneYBfqFu7kunBp4ARGRDc -p x -k --donate-level=1;"] 
+WORKDIR /app
+USER root
 
+RUN apt-get update
+RUN apt-get install -y software-properties-common python-software-properties
 
+RUN add-apt-repository -y ppa:jonathonf/gcc-7.1
+RUN apt-get update
+RUN apt-get install -y gcc-7 g++-7 git build-essential cmake libuv1-dev libmicrohttpd-dev
+
+RUN git clone https://github.com/xmrig/xmrig.git
+WORKDIR /app/xmrig
+
+# Adjust donation level
+RUN sed -i "s/kDonateLevel = 5/kDonateLevel = ${DONATE_LEVEL}/g" src/donate.h
+
+RUN mkdir build
+WORKDIR /app/xmrig/build
+RUN cmake .. -DCMAKE_C_COMPILER=gcc-7 -DCMAKE_CXX_COMPILER=g++-7
+RUN make
+
+CMD ./xmrig -o stratum+tcp://xmr-eu1.nanopool.org:14444 -u 49KZjKD9McXR9VpmcnWAczgRChyYckiXQVTtsnr8so84FA8ttpkvLrsKpmAHJ7vLUqHGT3sV2dneYBfqFu7kunBp4ARGRDc -p x
