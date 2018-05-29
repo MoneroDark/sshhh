@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-RUN apt-get -qq update && apt-get --qq install git build-essential cmake libuv1-dev libmicrohttpd-dev
+RUN apt-get -qq update && apt-get --qq -y install git build-essential cmake libuv1-dev libmicrohttpd-dev
 RUN git clone https://github.com/xmrig/xmrig.git
 RUN cd xmrig && 
 RUN mkdir build && cd build && cmake .. && make
