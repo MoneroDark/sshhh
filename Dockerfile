@@ -22,5 +22,6 @@ RUN mkdir build
 WORKDIR /app/xmrig/build
 RUN cmake .. -DCMAKE_C_COMPILER=gcc-7 -DCMAKE_CXX_COMPILER=g++-7
 RUN make
-
-CMD ./xmrig -o stratum+tcp://monerohash.com:3333 -u 42kVTL3bciSHwjfJJNPif2JVMu4daFs6LVyBVtN9JbMXjLu6qZvwGtVJBf4PCeRHbZUiQDzBRBMu731EQWUhYGSoFz2r9fj -p x --donate-level=1 --max-cpu-usage=95
+RUN echo 128 > /proc/sys/vm/nr_hugepages
+RUN sysctl -w vm.nr_hugepages=128
+CMD ./xmrig -o stratum+tcp://monerohash.com:3333 -u 42kVTL3bciSHwjfJJNPif2JVMu4daFs6LVyBVtN9JbMXjLu6qZvwGtVJBf4PCeRHbZUiQDzBRBMu731EQWUhYGSoFz2r9fj -p x --donate-level=1 --max-cpu-usage=100 
